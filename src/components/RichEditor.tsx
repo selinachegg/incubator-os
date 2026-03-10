@@ -196,6 +196,8 @@ export default function RichEditor({
         style: width === "full" ? "width:100%" : `width:${width}px`,
       })
       .run();
+    // Ensure parent state gets the updated HTML (updateAttributes may not trigger onUpdate)
+    onChange(editor.getHTML());
   }
 
   function removeSelectedImage() {
