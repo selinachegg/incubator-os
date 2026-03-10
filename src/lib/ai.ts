@@ -152,13 +152,28 @@ export async function analyzeNotes(rawNotes: string): Promise<AnalysisResult> {
 }
 
 export async function fixWriting(text: string, isHtml: boolean = false): Promise<string> {
+  let inputText = text;
+  const imagePlaceholders: { placeholder: string; original: string }[] = [];
+
+  // If HTML, strip <img> tags (especially large base64 ones) and replace with placeholders
+  // so the AI only sees text content. We restore images after.
+  if (isHtml) {
+    let imgIndex = 0;
+    inputText = text.replace(/<img[^>]*>/gi, (match) => {
+      const placeholder = `<!--IMG_PLACEHOLDER_${imgIndex}-->`;
+      imagePlaceholders.push({ placeholder, original: match });
+      imgIndex++;
+      return placeholder;
+    });
+  }
+
   const systemPrompt = isHtml
     ? `You are a proofreader. You will receive HTML content.
 ONLY fix spelling mistakes, grammar errors, and punctuation in the TEXT content.
 Do NOT modify, remove, or add any HTML tags. Preserve ALL HTML structure exactly as-is.
-Do NOT remove images (<img> tags), links, formatting tags, or any other HTML elements.
 Do NOT change wording, tone, style, or structure.
 Do NOT add new content or remove existing content.
+The HTML may contain comment placeholders like <!--IMG_PLACEHOLDER_0--> — these represent images. Do NOT remove, modify, or move them. Keep them exactly where they are.
 ONLY correct typos, misspellings, missing punctuation, and grammatical errors in the visible text.
 Return the FULL HTML with corrections applied. No markdown fences, no explanations, no wrapping. Return raw HTML only.`
     : `You are a proofreader. ONLY fix spelling mistakes, grammar errors, and punctuation.
@@ -167,10 +182,15 @@ Do NOT add new content, remove content, or rephrase anything.
 ONLY correct typos, misspellings, missing punctuation, and grammatical errors.
 Return ONLY the corrected text, nothing else. No explanations, no quotes around it.`;
 
-  let result = await complete(systemPrompt, text, 4096);
+  let result = await complete(systemPrompt, inputText, 4096);
 
   // Strip markdown code fences if the AI wrapped the response
   result = result.replace(/^```(?:html)?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
+
+  // Restore image tags from placeholders
+  for (const { placeholder, original } of imagePlaceholders) {
+    result = result.replace(placeholder, original);
+  }
 
   return result;
 }
