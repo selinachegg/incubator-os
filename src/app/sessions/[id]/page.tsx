@@ -6,6 +6,7 @@ import ActionList from "@/components/ActionList";
 import EditableNotes from "@/components/EditableNotes";
 import { Icon } from "@iconify/react";
 import DeleteSessionButton from "@/components/DeleteSessionButton";
+import EditableSessionHeader from "@/components/EditableSessionHeader";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -33,13 +34,6 @@ export default async function SessionDetailPage({ params }: Props) {
   const tags: string[] = session.tags ? JSON.parse(session.tags) : [];
   const hasAnalysis = !!session.summary;
 
-  const formattedDate = new Date(session.date).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-
   const sessionContext = [
     `Title: ${session.title}`,
     session.mentor ? `Mentor: ${session.mentor}` : "",
@@ -61,18 +55,16 @@ export default async function SessionDetailPage({ params }: Props) {
           <Icon icon="lucide:arrow-left" />
           Back to sessions
         </Link>
-        <div className="flex items-center justify-between">
-          <h1 className="font-heading text-3xl text-white">{session.title}</h1>
+        <div className="flex items-start justify-between gap-4">
+          <EditableSessionHeader
+            sessionId={session.id}
+            initialTitle={session.title}
+            initialMentor={session.mentor}
+            initialTopic={session.topic}
+            initialDate={session.date.toISOString()}
+          />
           <DeleteSessionButton sessionId={session.id} />
         </div>
-        <p className="text-white/60 mt-2 text-lg">
-          {session.mentor && (
-            <>
-              <span className="text-teal-400">{session.mentor}</span> &bull;{" "}
-            </>
-          )}
-          {session.topic} &bull; {formattedDate}
-        </p>
 
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
