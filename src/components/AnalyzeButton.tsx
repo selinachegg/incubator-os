@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Icon } from "@iconify/react";
 
 interface AnalyzeButtonProps {
   sessionId: string;
@@ -45,15 +46,18 @@ export default function AnalyzeButton({
       <button
         onClick={handleAnalyze}
         disabled={loading}
-        className="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="flex items-center gap-2 bg-purple-500 text-white px-6 py-3 border-2 border-black wobbly-border font-heading font-bold text-lg hard-shadow hard-shadow-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
+        <Icon icon="lucide:sparkles" className={loading ? "animate-spin" : ""} />
         {loading
           ? "Analyzing..."
           : alreadyAnalyzed
             ? "Re-analyze with AI"
             : "Analyze with AI"}
       </button>
-      {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+      {error && (
+        <p className="text-red-400 text-sm mt-2 font-body">{error}</p>
+      )}
     </div>
   );
 }

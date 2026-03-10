@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { analyzeNotes } from "@/lib/claude";
+import { analyzeNotes } from "@/lib/ai";
 import { NextRequest, NextResponse } from "next/server";
 
 // POST /api/analyze { sessionId }
@@ -15,7 +15,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const analysis = await analyzeNotes(session.rawNotes);
+    // Strip HTML tags for AI analysis
+    const plainText = session.rawNotes
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const analysis = await analyzeNotes(plainText);
 
     const updated = await prisma.session.update({
       where: { id: sessionId },

@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     data: {
       title: body.title,
       date: new Date(body.date),
-      mentor: body.mentor,
+      mentor: body.mentor || "",
       topic: body.topic,
       rawNotes: body.rawNotes,
     },
