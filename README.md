@@ -1,13 +1,18 @@
 # Incubator OS
 
-A lightweight tool to capture and structure insights from startup incubator trainings, mentor sessions, and workshops.
+A web app for startup incubation programs to capture raw notes from training sessions, mentor meetings, and workshops — then use AI to structure them into insights, action items, and knowledge articles.
 
 ## Features
 
-- Capture raw notes from sessions (title, date, mentor, topic, notes)
-- AI-powered analysis: automatically extract summary, key insights, action items, and tags
-- Search across all sessions
-- Clean, minimal dark UI
+- **Session Management** — Create, edit, and delete sessions with a rich text editor (images, formatting, lists)
+- **AI Insight Builder** — Automatically extract summaries, key insights, and topic tags from your notes
+- **Knowledge Base** — Generate structured AI articles from session notes, persisted and regenerable
+- **Action Board** — Manually create and track action items with priority levels (High / Medium / Low) linked to sessions
+- **Fix Spelling** — AI-powered proofreading that preserves your formatting, with before/after diff view
+- **Multi-Provider AI** — Choose between Gemini (free tier), Anthropic, or OpenRouter — configured directly in the app
+- **Dashboard** — Overview with pending actions, mentor stats, topic cloud, and insight summary
+- **Search** — Full-text search across all sessions and topics
+- **Dark UI** — SuperDesign aesthetic with wobbly borders, hard shadows, and a playful look
 
 ## Tech Stack
 
@@ -15,24 +20,19 @@ A lightweight tool to capture and structure insights from startup incubator trai
 - **TypeScript**
 - **Tailwind CSS v4**
 - **SQLite** + **Prisma ORM**
-- **Claude API** for AI summarization
+- **Multi-provider AI**: Google Gemini, Anthropic Claude, OpenRouter
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- An Anthropic API key ([get one here](https://console.anthropic.com/))
 
 ### Setup
 
 ```bash
 # Install dependencies
 npm install
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
 
 # Initialize the database
 npx prisma db push
@@ -43,6 +43,16 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+### Configure AI
+
+Go to **Settings** in the sidebar to connect your AI provider:
+
+- **Google Gemini** (default) — free tier available at [aistudio.google.com](https://aistudio.google.com/apikey)
+- **Anthropic Claude** — requires credits at [console.anthropic.com](https://console.anthropic.com/)
+- **OpenRouter** — many free models at [openrouter.ai](https://openrouter.ai/keys)
+
+No `.env` editing needed — everything is configured in-app.
+
 ### Database Management
 
 ```bash
@@ -52,14 +62,8 @@ npx prisma studio
 
 ## Usage
 
-1. Click **+ New Session** to create a session note
-2. Fill in the title, date, mentor, topic, and paste your raw notes
-3. On the session detail page, click **Analyze with AI** to extract structured insights
-4. Use the search bar on the sessions list to find past sessions
-
-## Future Roadmap
-
-- Embeddings storage for semantic search
-- Vector search with pgvector or similar
-- AI chat interface over all sessions (RAG)
-- Export to PDF/Notion
+1. **Create a session** — Click **+ New Session**, fill in title, date, mentor, topic, and your raw notes
+2. **Analyze with AI** — On the session page or from the Insights page, click to extract structured insights
+3. **Generate articles** — In the Knowledge Base, generate AI-written articles from your analyzed sessions
+4. **Track actions** — Go to the Action Board to create and manage your action items
+5. **Configure AI** — Visit Settings to switch providers or update your API key
